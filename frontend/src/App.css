@@ -1,0 +1,25 @@
+#nav-dropdown {
+    color: white;
+    border-radius: 0.25rem;
+}
+
+div.dropdown-menu.show {
+    background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important; 
+}
+
+a.dropdown-item {
+    color: white;
+    border-radius: 0.25rem;
+}
+
+.custom-dropdown {
+    color: white;
+    text-align: center;
+}
+.navbar .nav-link.dropdown-toggle {
+    color: #ffff;
+    border-radius: 0.35rem;
+}
+.navbar .nav-link.dropdown-toggle:hover {
+    color: #ffff;
+}

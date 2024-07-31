@@ -1,0 +1,80 @@
+/* การ์ดจำนวนบัญชีผู้ใช้ทั่งหมด */
+/* .custom-card-blue {
+    border-color: #007bff; 
+    background-color: #ffffff;
+    color: #007bff; 
+} */
+.custom-card-blue:hover {
+    border-color: #007bff; 
+    color: #007bff;
+    background-color: #007bff1d; 
+}
+.custom-card-blue:hover .link-text-blue {
+    color: #007bff !important;
+}
+
+/* การ์ดจำนวนครุภัณฑ์ทั่งหมด */
+/* .custom-card-green {
+    border-color: #005f05; 
+    background-color: #ffffff; 
+    color: #005f05; 
+} */
+.custom-card-purple:hover {
+    border-color: #62007a; 
+    color: #62007a; 
+    background-color: #62007a27; 
+}
+.custom-card-purple:hover .link-text-purple {
+    color: #62007a !important;
+}
+
+/* การ์ดจำนวนครุภัณฑ์ที่ใช้งานอยู่*/
+/* .custom-card-green {
+    border-color: #005f05; 
+    background-color: #ffffff; 
+    color: #005f05; 
+} */
+.custom-card-green:hover {
+    border-color: #005f05; 
+    color: #005f05; 
+    background-color: #005f0523; 
+}
+.custom-card-green:hover .link-text-green {
+    color: #005f05 !important;
+}
+
+/* การ์ดจำนวนครุภัณฑ์ที่จำหน่ายออก */
+/* .custom-card-red {
+    border-color: #ff0000; 
+    background-color: #ffffff; 
+    color: #ff0000; 
+} */
+.custom-card-red:hover {
+    border-color: #ff0000; 
+    color: #ff0000; 
+    background-color: #ec000018; 
+}
+.custom-card-red:hover .link-text-red {
+    color: #ff0000 !important;
+}
+
+/* การ์ดจำนวนครุภัณฑ์ที่จำหน่ายออก */
+/* .custom-card-gray {
+    border-color: #9b9b9b; 
+    background-color: #ffffff; 
+    color: #9b9b9b; 
+} */
+.custom-card-gray:hover {
+    border-color: #9b9b9b; 
+    color: #9b9b9b;
+    background-color: #e4e4e466; 
+}
+.custom-card-gray:hover .link-text-gray {
+    color: #9b9b9b !important;
+}
+
+.responsive-header {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: ellipsis;
+}

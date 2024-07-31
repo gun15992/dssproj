@@ -1,0 +1,25 @@
+.card.card-body {
+    width: 100%;
+    margin-top: 70px;
+}
+
+.nav-link:hover {
+    color: yellow; 
+    background-color: #636363;
+}
+
+@media (max-width: 991.20px) {
+    .responsive-text-hidden {
+        display: none;
+    }
+}
+
+.responsive-header {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: ellipsis;
+}
+
+.me-2, .me-2 {
+    margin: 0.25rem !important;
+}

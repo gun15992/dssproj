@@ -1,0 +1,9 @@
+.col-sm-12 {
+    margin-top: 70px;
+}
+
+.responsive-header {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: ellipsis;
+}

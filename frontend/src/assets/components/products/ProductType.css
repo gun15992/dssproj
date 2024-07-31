@@ -1,0 +1,5 @@
+.responsive-header {
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: ellipsis;
+}
