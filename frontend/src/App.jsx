@@ -29,14 +29,13 @@ function App() {
 
     useEffect(() => {
         if (isLoggedIn) {
-            AxiosInstance.get('/user')
-                .then(response => {
-                    setUser(response.data);
-                })
-                .catch(error => {
-                    console.error('Error fetching user data:', error);
-                    handleLogout();
-                });
+            AxiosInstance.get('/user').then(response => {
+                setUser(response.data);
+            })
+            .catch(error => {
+                console.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีผู้ใช้:', error);
+                handleLogout();
+            });
         }
     }, [isLoggedIn]);
 
