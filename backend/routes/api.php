@@ -23,14 +23,14 @@ Route::middleware('auth:sanctum')->get('users', function (Request $request) {
 
 // Route::resource('products', ProductController::class);
 
-// Route::get('categories', [CategoryController::class, 'index']);
-
 // Route::resource('logs', LogController::class);
 // Route::delete('logs', [LogController::class, 'clearAllLogs']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::resource('users', UserController::class);
+
     Route::resource('products', ProductController::class);
+
     Route::resource('logs', LogController::class);
     Route::delete('logs', [LogController::class, 'clearAllLogs']);
 });

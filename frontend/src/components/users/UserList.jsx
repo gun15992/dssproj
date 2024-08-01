@@ -40,7 +40,7 @@ function UserList() {
             setFilteredUsers(data);
             setUsersCount(data.length);
         } catch (error) {
-            console.error('เกิดข้อผิดพลาดระหว่างดึงข้อมูลจาก API', error);
+            console.error('เกิดข้อผิดพลาดระหว่างดึงข้อมูลบัญชีผู้ใช้จาก API:', error);
         }
         setLoading(false);
     };
@@ -57,7 +57,9 @@ function UserList() {
                 user.organization.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 user.section.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 user.position.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.role.toLowerCase().includes(searchQuery.toLowerCase())
+                (user.role === 'DSSROLE-ADMIN' && 'ผู้ดูแลระบบ'.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                (user.role === 'DSSROLE-OFFICER' && 'เจ้าหน้าที่'.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                (user.role === 'DSSROLE-USER' && 'ผู้ใช้งานระบบ'.toLowerCase().includes(searchQuery.toLowerCase()))
             );
             setFilteredUsers(filtered);
             setUsersCount(filtered.length);
@@ -161,18 +163,17 @@ function UserList() {
                                                         <td>{user.section}</td>
                                                         <td>{user.position}</td>
                                                         <td className="tag">
-                                                            {user.role === 'ผู้ดูแลระบบ' ? (
+                                                            {user.role === 'DSSROLE-ADMIN' ? (
                                                                 <span className="badge rounded-pill bg-success">
-                                                                    {user.role}
+                                                                    ผู้ดูแลระบบ
                                                                 </span>
-                                                            
-                                                            ): user.role === 'เจ้าหน้าที่' ? (
+                                                            ): user.role === 'DSSROLE-OFFICER' ? (
                                                                 <span className="badge rounded-pill bg-primary">
-                                                                    {user.role}
+                                                                    เจ้าหน้าที่
                                                                 </span>
                                                             ):(
                                                                 <span className="badge rounded-pill bg-secondary">
-                                                                    {user.role}
+                                                                    ผู้ใช้งานระบบ
                                                                 </span>
                                                             )}
                                                         </td>

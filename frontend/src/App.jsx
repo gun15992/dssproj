@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, NavLink, Navigate } from 'react-router-dom';
 import { Navbar, Nav, NavDropdown, Container, Row, Col } from 'react-bootstrap';
 
@@ -15,6 +15,7 @@ import Home from './components/home/Home';
 import LogList from './components/logs/LogList';
 import UserList from './components/users/UserList';
 import CreateUser from './components/users/CreateUser';
+import EditUser from './components/users/EditUser';
 import ProductList from './components/products/ProductList';
 import ProductType from './components/products/ProductType';
 import CreateProduct from './components/products/CreateProduct';
@@ -25,17 +26,32 @@ function App() {
     const apiUrl = import.meta.env.VITE_API_URL;
 
     const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token') !== null);
+    const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [userRole, setUserRole] = useState(null);
+
+    const isAdminOrOfficer = useMemo(() => {
+        return ["DSSROLE-ADMIN", "DSSROLE-OFFICER"].includes(userRole);
+    }, [userRole]);
+
+    const userName = useMemo(() => {
+        return isLoading ? 'Loading...' : user?.employee_name;
+    }, [isLoading, user]);
 
     useEffect(() => {
         if (isLoggedIn) {
-            AxiosInstance.get('/user').then(response => {
-                setUser(response.data);
-            })
-            .catch(error => {
-                console.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีผู้ใช้:', error);
-                handleLogout();
-            });
+            AxiosInstance.get('/user')
+                .then(response => {
+                    setUser(response.data);
+                    setUserRole(response.data.role);
+                })
+                .catch(error => {
+                    console.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีผู้ใช้:', error);
+                    handleLogout();
+                })
+                .finally(() => {
+                    setIsLoading(false); 
+                });
         }
     }, [isLoggedIn]);
 
@@ -95,11 +111,15 @@ function App() {
                                         <NavLink to="/product/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ข้อมูลครุภัณฑ์</NavLink>
                                         <NavLink to="/product/type" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ประเภทครุภัณฑ์</NavLink>
 
-                                        {/* Users */}
-                                        <NavLink to="/user/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ข้อมูลบัญชีผู้ใช้</NavLink>
+                                        {isAdminOrOfficer && (
+                                            <>
+                                                {/* Users */}
+                                                <NavLink to="/user/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ข้อมูลบัญชีผู้ใช้</NavLink>
 
-                                        {/* Log */}
-                                        <NavLink to="/logs/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ประวัติการทำรายการ</NavLink>
+                                                {/* Log */}
+                                                <NavLink to="/logs/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ประวัติการทำรายการ</NavLink>
+                                            </>
+                                        )}
                                     </Nav>
                                     <Nav>
                                         <NavDropdown title={
@@ -107,7 +127,7 @@ function App() {
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-person m-1" viewBox="0 0 16 16">
                                                     <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                                                 </svg>
-                                                {user ? user.employee_name : 'Loading...'}
+                                                {userName}
                                             </span>
                                         } 
                                         id="basic-nav-dropdown" className='custom-dropdown rounded'>
@@ -132,6 +152,7 @@ function App() {
                                 <Route path="/logs/list" element={isLoggedIn ? <LogList /> : <Navigate to="/login" />} />
                                 <Route path="/user/list" element={isLoggedIn ? <UserList /> : <Navigate to="/login" />} />
                                 <Route path="/user/create" element={isLoggedIn ? <CreateUser /> : <Navigate to="/login" />} />
+                                <Route path="/user/edit/:id" element={isLoggedIn ? <EditUser /> : <Navigate to="/login" />} />
                                 <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login onLogin={handleLogin} />} />
                             </Routes>
                         </Col>

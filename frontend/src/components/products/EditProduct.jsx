@@ -53,13 +53,12 @@ function EditProduct() {
     }, []);
 
     useEffect(() => {
-        axios.get(`${apiUrl}api/categories`)
-            .then(response => {
-                setCategories(response.data);
-            })
-            .catch(error => {
-                console.error("เกิดข้อผิดพลาดขณะดึงข้อมูล API ของ Category", error);
-            });
+        axios.get(`${apiUrl}api/categories`).then(response => {
+            setCategories(response.data);
+        })
+        .catch(error => {
+            console.error("เกิดข้อผิดพลาดขณะดึงข้อมูล API ของ Category", error);
+        });
     }, []);
 
     const fetchProduct = async () => {

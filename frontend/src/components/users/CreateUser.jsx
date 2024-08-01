@@ -143,9 +143,9 @@ function CreateUser() {
     });
 
     const [roles, setRoles] = useState([
-        'ผู้ดูแลระบบ',
-        'เจ้าหน้าที่',
-        'ผู้ใช้งานระบบ'
+        { label: 'ผู้ดูแลระบบ', value: 'DSSROLE-ADMIN' },
+        { label: 'เจ้าหน้าที่', value: 'DSSROLE-OFFICER' },
+        { label: 'ผู้ใช้งานระบบ', value: 'DSSROLE-USER' }
     ]);
 
     const handleOrganizationChange = (event) => {
@@ -357,7 +357,7 @@ function CreateUser() {
                                                 <Form.Control as="select" value={selectedRole} onChange={handleRoleChange} isInvalid={validationError.hasOwnProperty('role')}>
                                                     <option value="">- เลือกสถานะ -</option>
                                                     {roles.map((role, index) => (
-                                                        <option key={index} value={role}>{role}</option>
+                                                        <option key={index} value={role.value}>{role.label}</option>
                                                     ))}
                                                 </Form.Control>
                                                 {validationError.hasOwnProperty('role') && (

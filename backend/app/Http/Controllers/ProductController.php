@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Log;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, User $user)
     {
         $request->validate([
             'oldsn' => 'nullable|string',
@@ -82,8 +83,11 @@ class ProductController extends Controller
             Storage::disk('public')->putFileAs('product/image', $request->image, $imageName);
             Product::create($request->post() + ['image' => $imageName]);
 
+            $authUser = auth()->user();
+
             Log::create([
                 'ip_address' => $request->ip(),
+                'logusername' => $authUser ? $authUser->username : 'N/A',
                 'logname' => 'ครุภัณฑ์: ' . $request->newsn,
                 'message' => 'เพิ่มข้อมูลครุภัณฑ์สำเร็จ',
                 'timestamp' => Carbon::now(),
@@ -97,6 +101,7 @@ class ProductController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
+                'logusername' => $authUser ? $authUser->username : 'N/A',
                 'logname' => 'ครุภัณฑ์: ไม่พบข้อมูลครุภัณฑ์',
                 'message' => 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลบัญชีผู้ใช้ (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),
@@ -128,7 +133,7 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Product $product, User $user)
     {
         $request->validate([
             'oldsn' => 'nullable|string',
@@ -166,6 +171,7 @@ class ProductController extends Controller
 
         try {
             $product->fill($request->post())->update();
+            $authUser = auth()->user();
 
             if ($request->hasFile('image')) {
                 if ($product->image) {
@@ -182,6 +188,7 @@ class ProductController extends Controller
 
                 Log::create([
                     'ip_address' => $request->ip(),
+                    'logusername' => $authUser ? $authUser->username : 'N/A',
                     'logname' => 'ครุภัณฑ์: ' . $request->newsn,
                     'message' => 'แก้ไขข้อมูลครุภัณฑ์สำเร็จ (พร้อมเปลี่ยนภาพ)',
                     'timestamp' => Carbon::now(),
@@ -193,6 +200,7 @@ class ProductController extends Controller
             } else {
                 Log::create([
                     'ip_address' => $request->ip(),
+                    'logusername' => $authUser ? $authUser->username : 'N/A',
                     'logname' => 'ครุภัณฑ์: ' . $request->newsn,
                     'message' => 'แก้ไขข้อมูลครุภัณฑ์สำเร็จ (ไม่เปลี่ยนภาพ)',
                     'timestamp' => Carbon::now(),
@@ -207,6 +215,7 @@ class ProductController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
+                'logusername' => $authUser ? $authUser->username : 'N/A',
                 'logname' => 'ครุภัณฑ์: ' . $request->newsn,
                 'message' => 'เกิดข้อผิดพลาดในการแก้ไขข้อมูลครุภัณฑ์ (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),
@@ -224,7 +233,7 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product, Request $request)
+    public function destroy(Product $product, Request $request, User $user)
     {
         try {
             if ($product->image) {
@@ -236,8 +245,11 @@ class ProductController extends Controller
 
             $product->delete();
 
+            $authUser = auth()->user();
+
             Log::create([
                 'ip_address' => $request->ip(),
+                'logusername' => $authUser ? $authUser->username : 'N/A',
                 'logname' => 'ครุภัณฑ์: ไม่พบข้อมูลครุภัณฑ์',
                 'message' => 'ลบข้อมูลครุภัณฑ์สำเร็จ',
                 'timestamp' => Carbon::now(),
@@ -251,6 +263,7 @@ class ProductController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
+                'logusername' => $authUser ? $authUser->username : 'N/A',
                 'logname' => 'ครุภัณฑ์: ' . $request->newsn,
                 'message' => 'เกิดข้อผิดพลาดในการลบข้อมูลครุภัณฑ์ (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),

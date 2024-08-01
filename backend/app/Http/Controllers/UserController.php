@@ -14,7 +14,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:sanctum');
+        $this->middleware('auth:sanctum')->except(['index', 'show']);;
     }
 
     public function getAuthenticatedUser(Request $request)
@@ -77,9 +77,12 @@ class UserController extends Controller
             ]);
             $user->save();
 
+            $authUser = auth()->user();
+
             Log::create([
                 'ip_address' => $request->ip(),
-                'logname' => 'บัญชีผู้ใช้: ' . $request->username,
+                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logname' => 'บัญชีผู้ใช้: ' . $request->input('username'),
                 'message' => 'เพิ่มข้อมูลบัญชีผู้ใช้สำเร็จ',
                 'timestamp' => Carbon::now(),
             ]);
@@ -92,6 +95,7 @@ class UserController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
+                'logusername' => $authUser ? $authUser->username : 'N/A',
                 'logname' => 'บัญชีผู้ใช้: ไม่พบข้อมูลบัญชีผู้ใช้',
                 'message' => 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลบัญชีผู้ใช้ (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),
@@ -109,10 +113,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $user = User::findOrFail($id);
-        return response()->json($user);
+        return response()->json([
+            'user' => $user
+        ]);
     }
 
     /**
@@ -129,7 +134,7 @@ class UserController extends Controller
             'employee_name' => 'required',
             'position' => 'required',
             'username' => 'required|unique:users,username,' . $id,
-            'password' => 'sometimes|required',
+            'password' => 'sometimes',
             'email' => 'required',
             'organization' => 'required',
             'section' => 'required',
@@ -140,7 +145,6 @@ class UserController extends Controller
             'employee_name.required' => '* กรุณากรอกชื่อเจ้าของบัญชี',
             'position.required' => '* กรุณากรอกตำแหน่ง',
             'username.required' => '* กรุณากรอกชื่อบัญชีผู้ใช้',
-            'password.required' => '* กรุณากรอกรหัสผ่าน',
             'email.required' => '* กรุณากรอกอีเมล',
             'organization.required' => '* กรุณาเลือกกอง / สำนัก',
             'section.required' => '* กรุณาเลือกกลุ่มงาน / ฝ่าย',
@@ -167,9 +171,12 @@ class UserController extends Controller
 
             $user->save();
 
+            $authUser = auth()->user();
+
             Log::create([
                 'ip_address' => $request->ip(),
-                'logname' => 'บัญชีผู้ใช้: ' . $request->username,
+                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logname' => 'บัญชีผู้ใช้: ' . $request->input('username'),
                 'message' => 'แก้ไขข้อมูลบัญชีผู้ใช้สำเร็จ',
                 'timestamp' => Carbon::now(),
             ]);
@@ -182,7 +189,8 @@ class UserController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logname' => 'บัญชีผู้ใช้: ' . $request->username,
+                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logname' => 'บัญชีผู้ใช้: ' . $request->input('username'),
                 'message' => 'เกิดข้อผิดพลาดในการแก้ไขข้อมูลบัญชีผู้ใช้ (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),
             ]);
@@ -203,11 +211,15 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
+            $username = $user->username;
             $user->delete();
+
+            $authUser = auth()->user();
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logname' => 'บัญชีผู้ใช้: ไม่พบข้อมูลบัญชีผู้ใช้',
+                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logname' => 'บัญชีผู้ใช้: ' . $username,
                 'message' => 'ลบข้อมูลบัญชีผู้ใช้สำเร็จ',
                 'timestamp' => Carbon::now(),
             ]);
@@ -220,7 +232,8 @@ class UserController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logname' => 'บัญชีผู้ใช้: ' . $request->username,
+                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logname' => 'บัญชีผู้ใช้: ' . $request->input('username'),
                 'message' => 'เกิดข้อผิดพลาดในการลบข้อมูลบัญชีผู้ใช้: (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),
             ]);

@@ -9,7 +9,7 @@ class Log extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ip_address', 'logname', 'message', 'timestamp'];
+    protected $fillable = ['ip_address', 'logusername', 'logname', 'message', 'timestamp'];
 
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s',

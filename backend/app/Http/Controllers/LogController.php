@@ -29,12 +29,14 @@ class LogController extends Controller
     {
         $request->validate([
             'ip_address' => 'required',
+            'logusername' => 'required',
             'logname' => 'required',
             'message' => 'required|string|max:255',
         ]);
 
         $log = Log::create([
             'ip_address' => $request->ipaddress,
+            'logusername' => $request->logusername,
             'logname' => $request->logname,
             'message' => $request->message,
             'timestamp' => now(),
@@ -47,6 +49,7 @@ class LogController extends Controller
     {
         $request->validate([
             'ip_address' => 'required',
+            'logusername' => 'required',
             'logname' => 'required',
             'message' => 'required|string|max:255',
         ]);
@@ -55,6 +58,7 @@ class LogController extends Controller
         if ($log) {
             $log->update([
                 'ip_address' => $request->ipaddress,
+                'logusername' => $request->logusername,
                 'logname' => $request->logname,
                 'message' => $request->message,
                 'timestamp' => now(),
