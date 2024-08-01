@@ -414,8 +414,8 @@ function EditProduct() {
                                 </Card.Body>
                             </Card>
                             <Card className="mb-5">
-                                <Card.Body>
-                                    <h2 className="responsive-header card-title">
+                                <Card.Body className="text-truncate">
+                                    <h2 className="responsive-header card-title text-ellipsis overflow-hidden">
                                         <BsFillCartFill size={30} className="m-3" />
                                         แก้ไขข้อมูลการจัดซื้อครุภัณฑ์
                                     </h2>
