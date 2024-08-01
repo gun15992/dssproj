@@ -38,7 +38,7 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, User $user)
+    public function store(Request $request)
     {
         $request->validate([
             'oldsn' => 'nullable|string',
@@ -133,7 +133,7 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product, User $user)
+    public function update(Request $request, Product $product)
     {
         $request->validate([
             'oldsn' => 'nullable|string',
@@ -233,7 +233,7 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product, Request $request, User $user)
+    public function destroy(Product $product, Request $request)
     {
         try {
             if ($product->image) {
@@ -250,7 +250,7 @@ class ProductController extends Controller
             Log::create([
                 'ip_address' => $request->ip(),
                 'logusername' => $authUser ? $authUser->username : 'N/A',
-                'logname' => 'ครุภัณฑ์: ไม่พบข้อมูลครุภัณฑ์',
+                'logname' => 'ครุภัณฑ์: ' . $product->newsn,
                 'message' => 'ลบข้อมูลครุภัณฑ์สำเร็จ',
                 'timestamp' => Carbon::now(),
             ]);
