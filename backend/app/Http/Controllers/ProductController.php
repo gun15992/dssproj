@@ -87,7 +87,7 @@ class ProductController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'ครุภัณฑ์: ' . $request->newsn,
                 'message' => 'เพิ่มข้อมูลครุภัณฑ์สำเร็จ',
                 'timestamp' => Carbon::now(),
@@ -101,7 +101,7 @@ class ProductController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'ครุภัณฑ์: ไม่พบข้อมูลครุภัณฑ์',
                 'message' => 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลบัญชีผู้ใช้ (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),
@@ -188,7 +188,7 @@ class ProductController extends Controller
 
                 Log::create([
                     'ip_address' => $request->ip(),
-                    'logusername' => $authUser ? $authUser->username : 'N/A',
+                    'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                     'logname' => 'ครุภัณฑ์: ' . $request->newsn,
                     'message' => 'แก้ไขข้อมูลครุภัณฑ์สำเร็จ (พร้อมเปลี่ยนภาพ)',
                     'timestamp' => Carbon::now(),
@@ -200,7 +200,7 @@ class ProductController extends Controller
             } else {
                 Log::create([
                     'ip_address' => $request->ip(),
-                    'logusername' => $authUser ? $authUser->username : 'N/A',
+                    'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                     'logname' => 'ครุภัณฑ์: ' . $request->newsn,
                     'message' => 'แก้ไขข้อมูลครุภัณฑ์สำเร็จ (ไม่เปลี่ยนภาพ)',
                     'timestamp' => Carbon::now(),
@@ -215,7 +215,7 @@ class ProductController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'ครุภัณฑ์: ' . $request->newsn,
                 'message' => 'เกิดข้อผิดพลาดในการแก้ไขข้อมูลครุภัณฑ์ (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),
@@ -249,7 +249,7 @@ class ProductController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'ครุภัณฑ์: ' . $product->newsn,
                 'message' => 'ลบข้อมูลครุภัณฑ์สำเร็จ',
                 'timestamp' => Carbon::now(),
@@ -263,7 +263,7 @@ class ProductController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'ครุภัณฑ์: ' . $request->newsn,
                 'message' => 'เกิดข้อผิดพลาดในการลบข้อมูลครุภัณฑ์ (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),

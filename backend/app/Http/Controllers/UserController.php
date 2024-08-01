@@ -81,7 +81,7 @@ class UserController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'บัญชีผู้ใช้: ' . $request->input('username'),
                 'message' => 'เพิ่มข้อมูลบัญชีผู้ใช้สำเร็จ',
                 'timestamp' => Carbon::now(),
@@ -95,7 +95,7 @@ class UserController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'บัญชีผู้ใช้: ไม่พบข้อมูลบัญชีผู้ใช้',
                 'message' => 'เกิดข้อผิดพลาดในการเพิ่มข้อมูลบัญชีผู้ใช้ (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),
@@ -175,7 +175,7 @@ class UserController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'บัญชีผู้ใช้: ' . $request->input('username'),
                 'message' => 'แก้ไขข้อมูลบัญชีผู้ใช้สำเร็จ',
                 'timestamp' => Carbon::now(),
@@ -189,7 +189,7 @@ class UserController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'บัญชีผู้ใช้: ' . $request->input('username'),
                 'message' => 'เกิดข้อผิดพลาดในการแก้ไขข้อมูลบัญชีผู้ใช้ (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),
@@ -218,7 +218,7 @@ class UserController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'บัญชีผู้ใช้: ' . $username,
                 'message' => 'ลบข้อมูลบัญชีผู้ใช้สำเร็จ',
                 'timestamp' => Carbon::now(),
@@ -232,7 +232,7 @@ class UserController extends Controller
 
             Log::create([
                 'ip_address' => $request->ip(),
-                'logusername' => $authUser ? $authUser->username : 'N/A',
+                'logusername' => $authUser ? $authUser->username : 'บัญชีผู้ใช้ไม่ทราบชื่อ',
                 'logname' => 'บัญชีผู้ใช้: ' . $request->input('username'),
                 'message' => 'เกิดข้อผิดพลาดในการลบข้อมูลบัญชีผู้ใช้: (รหัส Error: ' . $e->getCode() . ')',
                 'timestamp' => Carbon::now(),
