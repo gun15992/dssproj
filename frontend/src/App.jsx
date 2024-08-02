@@ -32,7 +32,7 @@ function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('token') !== null);
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
-    const [userRole, setUserRole] = useState(null);
+    const [userRole, setUserRole] = useState("");
 
     const isAdmin = useMemo(() => {
         return "DSSROLE-ADMIN".includes(userRole);
@@ -41,6 +41,14 @@ function App() {
     const isOfficer = useMemo(() => {
         return "DSSROLE-OFFICER".includes(userRole);
     }, [userRole]);
+
+    const isUser = useMemo(() => {
+        return "DSSROLE-USER".includes(userRole);
+    }, [userRole]);
+    
+    const isAllRole = useMemo(() => {
+        return isAdmin || isOfficer || isUser;
+    }, [isAdmin, isOfficer, isUser]);
 
     const userName = useMemo(() => {
         return isLoading ? 'Loading...' : user?.employee_name;
@@ -53,7 +61,7 @@ function App() {
                 setUserRole(response.data.role);
             })
             .catch(error => {
-                console.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีผู้ใช้:', error);
+                console.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีผู้ใช้จาก API:', error);
                 handleLogout();
             })
             .finally(() => {
@@ -77,6 +85,7 @@ function App() {
     };
 
     const handleLogout = async () => {
+        setIsLoading(true);
         try {
             await AxiosInstance.post('logout');
             localStorage.removeItem('token');
@@ -89,6 +98,7 @@ function App() {
                 window.location.href = '/login';
             });
         } catch (error) {
+            setIsLoggedIn(false);
             Swal.fire({
                 icon: 'error',
                 title: 'เกิดข้อผิดพลาด',
@@ -118,13 +128,16 @@ function App() {
                                 </Navbar.Toggle>
                                 <Navbar.Collapse id="basic-navbar-nav" className="me-auto justify-center">
                                     <Nav className="me-auto">
-                                        {/* Home */}
-                                        <NavLink to="/" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>หน้าหลัก</NavLink>
+                                        {isAllRole && (
+                                            <>
+                                                {/* Home */}
+                                                <NavLink to="/" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>หน้าหลัก</NavLink>
 
-                                        {/* Product */}
-                                        <NavLink to="/product/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ข้อมูลครุภัณฑ์</NavLink>
-                                        <NavLink to="/product/type" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ประเภทครุภัณฑ์</NavLink>
-
+                                                {/* Product */}
+                                                <NavLink to="/product/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ข้อมูลครุภัณฑ์</NavLink>
+                                                <NavLink to="/product/type" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ประเภทครุภัณฑ์</NavLink>
+                                            </>
+                                        )}
                                         {isAdmin && (
                                             <>
                                                 {/* Users */}
@@ -159,17 +172,17 @@ function App() {
                         <Col md="auto">
                             <Routes>
                                 <Route path="/" element={
-                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={true}>
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={isAllRole}>
                                         <Home />
                                     </PrivateRoute>
                                 } />
                                 <Route path="/product/list" element={
-                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={true}>
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={isAllRole}>
                                         <ProductList />
                                     </PrivateRoute>
                                 } />
                                 <Route path="/product/type" element={
-                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={true}>
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={isAllRole}>
                                         <ProductType />
                                     </PrivateRoute>
                                 } />

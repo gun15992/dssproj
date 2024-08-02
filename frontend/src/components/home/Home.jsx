@@ -1,7 +1,7 @@
 import '../../assets/components/home/Home.css';
 
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import { Container, Card, Row, Col, Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -10,6 +10,8 @@ import AxiosInstance from '../login/AxiosInstance';
 import { FaUser, FaBoxes, FaChartPie } from 'react-icons/fa';
 import { RiInboxArchiveFill, RiInboxUnarchiveFill, RiInbox2Fill } from "react-icons/ri";
 import { LuBoxSelect } from "react-icons/lu";
+
+import Loading from '../../functions/Loading';
 
 function Home() {
     const webTitle = 'หน้าหลัก';
@@ -23,13 +25,22 @@ function Home() {
 
     const [users, setUsers] = useState([]);
     const [usersCount, setUsersCount] = useState(0);
+    const [userRole, setUserRole] = useState('');
+    
+    const [isLoading, setIsLoading] = useState(true);
+
+    const isAdmin = useMemo(() => {
+        return "DSSROLE-ADMIN".includes(userRole);
+    }, [userRole]);
 
     useEffect(() => {
         fetchProducts();
         fetchUsers();
+        fetchUserRole();
     }, []);
 
     const fetchProducts = async () => {
+        setIsLoading(true);
         await AxiosInstance.get(`/products`).then(({data}) => {
             setProducts(data);
             setProductsCount(data.length);
@@ -37,9 +48,11 @@ function Home() {
             setSoldProductCount(data.filter(product => product.status === 'DSSPRODUCTSTATE-02').length);
             setLostProductCount(data.filter(product => product.status === 'DSSPRODUCTSTATE-03').length);
         });
+        setIsLoading(false);
     }
 
     const fetchUsers = async () => {
+        setIsLoading(true);
         try {
             const response = await AxiosInstance.get('/users');
             setUsers(response.data);
@@ -47,7 +60,23 @@ function Home() {
         } catch (error) {
             console.error('เกิดข้อผิดพลาดขณะดึงข้อมูลบัญชีผู้ใช้:', error.response);
         }
+        setIsLoading(false);
     };
+
+    const fetchUserRole = async () => {
+        setIsLoading(true);
+        try {
+            const response = await AxiosInstance.get('/user');
+            setUserRole(response.data.role);
+        } catch (error) {
+            console.error('Error fetching user role:', error.response);
+        }
+        setIsLoading(false);
+    };
+
+    if (isLoading) {
+        return <Loading />; 
+    }
 
     return (
         <Container fluid>
@@ -81,10 +110,14 @@ function Home() {
                                                         <p>จำนวน {usersCount} คน</p>
                                                     </Col>
                                                 </Row>
-                                                <hr />
-                                                <Link to="user/list" className="text-decoration-none text-black link-text-blue">
-                                                    ดูข้อมูลเพิ่มเติม <span>&gt;</span>
-                                                </Link>
+                                                {isAdmin && (
+                                                    <>
+                                                        <hr />
+                                                        <Link to="user/list" className="text-decoration-none text-black link-text-blue">
+                                                            ดูข้อมูลเพิ่มเติม <span>&gt;</span>
+                                                        </Link>
+                                                    </>
+                                                )}
                                             </Card.Body>
                                         </Card>
                                     </Col>
