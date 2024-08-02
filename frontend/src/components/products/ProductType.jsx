@@ -7,6 +7,8 @@ import { Helmet, HelmetProvider } from 'react-helmet-async'
 import { Container, Card, Row, Col, Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
+import Loading from '../../functions/Loading';
+
 function ProductType() {
     const webTitle = 'ประเภทครุภัณฑ์';
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -17,11 +19,14 @@ function ProductType() {
     const [computerProductCount, setComputerProductCount] = useState(0);
     const [softwareProductCount, setSoftwareProductCount] = useState(0);
 
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         fetchProducts();
     }, []);
 
     const fetchProducts = async () => {
+        setLoading(true);
         await AxiosInstance.get(`/products`).then(({data}) => {
             setProducts(data);
             setProductsCount(data.length);
@@ -29,6 +34,11 @@ function ProductType() {
             setComputerProductCount(data.filter(product => product.category_code === 'DSSPRODUCTTYPE-04').length);
             setSoftwareProductCount(data.filter(product => product.category_code === 'DSSPRODUCTTYPE-05').length);
         })
+        setLoading(false);
+    }
+
+    if (loading) {
+        return <Loading />; 
     }
 
     return (

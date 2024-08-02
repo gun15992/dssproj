@@ -10,6 +10,8 @@ import AxiosInstance from '../login/AxiosInstance'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 
+import Loading from '../../functions/Loading';
+
 function UserList() {
     const webTitle = 'ข้อมูลบัญชีผู้ใช้';
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -98,6 +100,10 @@ function UserList() {
                 icon: 'error'
             })
         })
+    }
+
+    if (loading) {
+        return <Loading />; 
     }
 
     return (

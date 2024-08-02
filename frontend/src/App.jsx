@@ -61,7 +61,7 @@ function App() {
                 setUserRole(response.data.role);
             })
             .catch(error => {
-                console.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีผู้ใช้จาก API:', error);
+                console.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีผู้ใช้', error);
                 handleLogout();
             })
             .finally(() => {

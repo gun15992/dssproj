@@ -58,7 +58,7 @@ function Home() {
             setUsers(response.data);
             setUsersCount(response.data.length);
         } catch (error) {
-            console.error('เกิดข้อผิดพลาดขณะดึงข้อมูลบัญชีผู้ใช้:', error.response);
+            console.error('เกิดข้อผิดพลาดขณะดึงข้อมูลบัญชีผู้ใช้', error.response);
         }
         setIsLoading(false);
     };
@@ -69,7 +69,7 @@ function Home() {
             const response = await AxiosInstance.get('/user');
             setUserRole(response.data.role);
         } catch (error) {
-            console.error('Error fetching user role:', error.response);
+            console.error('เกิดข้อผิดพลาดระหว่างดึงข้อมูลบัญชีผู้ใช้', error.response);
         }
         setIsLoading(false);
     };

@@ -1,12 +1,14 @@
 import '../../assets/components/products/ProductList.css';
 
 import { Helmet, HelmetProvider } from 'react-helmet-async'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Container, Card, Row, Col, Button, Form, Spinner } from 'react-bootstrap';
 import AxiosInstance from '../login/AxiosInstance'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+
+import Loading from '../../functions/Loading';
 
 function ProductList() {
     const webTitle = 'ข้อมูลครุภัณฑ์';
@@ -16,15 +18,23 @@ function ProductList() {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [productsCount, setProductsCount] = useState(0);
-    const [loading, setLoading] = useState(true);
 
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
 
+    const [loading, setLoading] = useState(true);
+
+    const [userRole, setUserRole] = useState('');
+
+    const isOfficer = useMemo(() => {
+        return "DSSROLE-OFFICER".includes(userRole);
+    }, [userRole]);
+
     useEffect(() => {
         fetchCategories();
         fetchProducts();
+        fetchUserRole();
     }, []);
 
     useEffect(() => {
@@ -67,6 +77,17 @@ function ProductList() {
         } catch (error) {
             console.error('เกิดข้อผิดพลาดระหว่างดึงข้อมูลประเภทครุภัณฑ์', error);
         }
+    };
+
+    const fetchUserRole = async () => {
+        setLoading(true);
+        try {
+            const response = await AxiosInstance.get('/user');
+            setUserRole(response.data.role);
+        } catch (error) {
+            console.error('เกิดข้อผิดพลาดระหว่างดึงข้อมูลบัญชีผู้ใช้', error.response);
+        }
+        setLoading(false);
     };
 
     const getCategoryName = (categoryId) => {
@@ -137,6 +158,10 @@ function ProductList() {
         })
     }
 
+    if (loading) {
+        return <Loading />; 
+    }
+
     return (
         <Container fluid>
             <HelmetProvider>
@@ -167,12 +192,16 @@ function ProductList() {
                                             </svg>}
                                             <span className="responsive-text-hidden">รีเฟรช</span>
                                         </Button>
-                                        <Link className='btn btn-success' to="/product/create">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-file-earmark-plus-fill m-1" viewBox="0 0 16 16">
-                                                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M8.5 7v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 1 0"/>
-                                            </svg>
-                                            <span className="responsive-text-hidden">เพิ่มข้อมูล</span>
-                                        </Link>
+                                        {isOfficer && (
+                                            <>
+                                                <Link className='btn btn-success' to="/product/create">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-file-earmark-plus-fill m-1" viewBox="0 0 16 16">
+                                                        <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M8.5 7v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 1 0"/>
+                                                    </svg>
+                                                    <span className="responsive-text-hidden">เพิ่มข้อมูล</span>
+                                                </Link>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                                 <Row>
@@ -207,7 +236,9 @@ function ProductList() {
                                                 <td>หน่วยงานรับผิดชอบ</td>
                                                 <td>สถานที่ตั้ง</td>
                                                 <td>สถานะ</td>
-                                                <td></td>
+                                                {isOfficer && (
+                                                    <td></td>
+                                                )}
                                             </tr>
                                         </thead>
                                         <tbody className="align-middle">
@@ -243,20 +274,22 @@ function ProductList() {
                                                                 </span>
                                                             )}
                                                         </td>
-                                                        <td className="justify-center items-center">
-                                                            <Link to={`/product/edit/${product.id}`} className="btn btn-warning me-2 text-white d-block d-md-inline-block">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-fill m-1" viewBox="0 0 16 16">
-                                                                    <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
-                                                                </svg>
-                                                                {/* แก้ไขข้อมูล */}
-                                                            </Link>
-                                                            <Button variant='danger' onClick={() => deleteProduct(product.id)} className="d-block d-md-inline-block m-1" width="100px">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash-fill m-1" viewBox="0 0 16 16">
-                                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
-                                                                </svg>
-                                                                {/* ลบข้อมูล */}
-                                                            </Button>
-                                                        </td>
+                                                        {isOfficer && (
+                                                            <td className="justify-center items-center">
+                                                                <Link to={`/product/edit/${product.id}`} className="btn btn-warning me-2 text-white d-block d-md-inline-block">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-fill m-1" viewBox="0 0 16 16">
+                                                                        <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
+                                                                    </svg>
+                                                                    {/* แก้ไขข้อมูล */}
+                                                                </Link>
+                                                                <Button variant='danger' onClick={() => deleteProduct(product.id)} className="d-block d-md-inline-block m-1" width="100px">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash-fill m-1" viewBox="0 0 16 16">
+                                                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                                                                    </svg>
+                                                                    {/* ลบข้อมูล */}
+                                                                </Button>
+                                                            </td>
+                                                        )}
                                                     </tr>
                                                 ))
                                             ) : (
