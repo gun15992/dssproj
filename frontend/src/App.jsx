@@ -10,6 +10,7 @@ import './App.css';
 
 import UserIcon from './assets/user.svg';
 import MenuIcon from './assets/burger-menu.png';
+
 import Login from './components/login/Login';
 import Home from './components/home/Home';
 import LogList from './components/logs/LogList';
@@ -22,6 +23,9 @@ import CreateProduct from './components/products/CreateProduct';
 import EditProduct from './components/products/EditProduct';
 import AxiosInstance from './components/login/AxiosInstance';
 
+import PrivateRoute from './functions/PrivateRoute';
+import Loading from './functions/Loading';
+
 function App() {
     const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -30,8 +34,12 @@ function App() {
     const [user, setUser] = useState(null);
     const [userRole, setUserRole] = useState(null);
 
-    const isAdminOrOfficer = useMemo(() => {
-        return ["DSSROLE-ADMIN", "DSSROLE-OFFICER"].includes(userRole);
+    const isAdmin = useMemo(() => {
+        return "DSSROLE-ADMIN".includes(userRole);
+    }, [userRole]);
+
+    const isOfficer = useMemo(() => {
+        return "DSSROLE-OFFICER".includes(userRole);
     }, [userRole]);
 
     const userName = useMemo(() => {
@@ -40,18 +48,19 @@ function App() {
 
     useEffect(() => {
         if (isLoggedIn) {
-            AxiosInstance.get('/user')
-                .then(response => {
-                    setUser(response.data);
-                    setUserRole(response.data.role);
-                })
-                .catch(error => {
-                    console.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีผู้ใช้:', error);
-                    handleLogout();
-                })
-                .finally(() => {
-                    setIsLoading(false); 
-                });
+            AxiosInstance.get('/user').then(response => {
+                setUser(response.data);
+                setUserRole(response.data.role);
+            })
+            .catch(error => {
+                console.error('เกิดข้อผิดพลาดในการดึงข้อมูลบัญชีผู้ใช้:', error);
+                handleLogout();
+            })
+            .finally(() => {
+                setIsLoading(false); 
+            });
+        } else {
+            setIsLoading(false); 
         }
     }, [isLoggedIn]);
 
@@ -64,6 +73,7 @@ function App() {
 
     const handleLogin = () => {
         setIsLoggedIn(true);
+        setIsLoading(true);
     };
 
     const handleLogout = async () => {
@@ -88,6 +98,10 @@ function App() {
         }
     };
 
+    if (isLoading) {
+        return <Loading />; 
+    }
+
     return (
         <Router>
             <div className="d-flex flex-column min-vh-100">
@@ -111,13 +125,13 @@ function App() {
                                         <NavLink to="/product/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ข้อมูลครุภัณฑ์</NavLink>
                                         <NavLink to="/product/type" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ประเภทครุภัณฑ์</NavLink>
 
-                                        {isAdminOrOfficer && (
+                                        {isAdmin && (
                                             <>
                                                 {/* Users */}
                                                 <NavLink to="/user/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ข้อมูลบัญชีผู้ใช้</NavLink>
 
                                                 {/* Log */}
-                                                <NavLink to="/logs/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ประวัติการทำรายการ</NavLink>
+                                                <NavLink to="/log/list" className="nav-link text-white rounded mx-2 text-center" onClick={handleNavLinkClick}>ประวัติการทำรายการ</NavLink>
                                             </>
                                         )}
                                     </Nav>
@@ -144,15 +158,51 @@ function App() {
                     <Row className="justify-content-md-center">
                         <Col md="auto">
                             <Routes>
-                                <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
-                                <Route path="/product/list" element={isLoggedIn ? <ProductList /> : <Navigate to="/login" />} />
-                                <Route path="/product/type" element={isLoggedIn ? <ProductType /> : <Navigate to="/login" />} />
-                                <Route path="/product/create" element={isLoggedIn ? <CreateProduct /> : <Navigate to="/login" />} />
-                                <Route path="/product/edit/:id" element={isLoggedIn ? <EditProduct /> : <Navigate to="/login" />} />
-                                <Route path="/logs/list" element={isLoggedIn ? <LogList /> : <Navigate to="/login" />} />
-                                <Route path="/user/list" element={isLoggedIn ? <UserList /> : <Navigate to="/login" />} />
-                                <Route path="/user/create" element={isLoggedIn ? <CreateUser /> : <Navigate to="/login" />} />
-                                <Route path="/user/edit/:id" element={isLoggedIn ? <EditUser /> : <Navigate to="/login" />} />
+                                <Route path="/" element={
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={true}>
+                                        <Home />
+                                    </PrivateRoute>
+                                } />
+                                <Route path="/product/list" element={
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={true}>
+                                        <ProductList />
+                                    </PrivateRoute>
+                                } />
+                                <Route path="/product/type" element={
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={true}>
+                                        <ProductType />
+                                    </PrivateRoute>
+                                } />
+                                <Route path="/product/create" element={
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={isOfficer}>
+                                        <CreateProduct />
+                                    </PrivateRoute>
+                                } />
+                                <Route path="/product/edit/:id" element={
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={isOfficer}>
+                                        <EditProduct />
+                                    </PrivateRoute>
+                                } />
+                                <Route path="/log/list" element={
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={isAdmin}>
+                                        <LogList />
+                                    </PrivateRoute>
+                                } />
+                                <Route path="/user/list" element={
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={isAdmin}>
+                                        <UserList />
+                                    </PrivateRoute>
+                                } />
+                                <Route path="/user/create" element={
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={isAdmin}>
+                                        <CreateUser />
+                                    </PrivateRoute>
+                                } />
+                                <Route path="/user/edit/:id" element={
+                                    <PrivateRoute isLoggedIn={isLoggedIn} isAllowed={isAdmin}>
+                                        <EditUser />
+                                    </PrivateRoute>
+                                } />
                                 <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login onLogin={handleLogin} />} />
                             </Routes>
                         </Col>
