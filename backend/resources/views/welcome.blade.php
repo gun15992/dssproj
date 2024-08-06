@@ -27,6 +27,15 @@
                 justify-content: center;
                 gap: 30px;
             }
+            .update-info {
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                font-size: 0.875rem;
+                padding: 0.5rem;
+                border-radius: 0.25rem;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
         </style>
     </head>
     <body class="antialiased">
@@ -44,7 +53,19 @@
                 <div class="text-center text-sm text-gray-500">
                     Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
                 </div>
+                <div class="update-info text-gray-500">
+                    Last updated: <span id="last-updated"></span>
+                </div>
             </div>
         </div>
+        <script>
+            function updateLastUpdated() {
+                const now = new Date();
+                const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                const lastUpdated = now.toLocaleDateString('en-US', options);
+                document.getElementById('last-updated').textContent = lastUpdated;
+            }
+            updateLastUpdated();
+        </script>
     </body>
 </html>
