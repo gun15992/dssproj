@@ -41,4 +41,19 @@
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
     ),
   ),
+  'pestphp/pest-plugin-laravel' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Pest\\Laravel\\PestServiceProvider',
+    ),
+  ),
+  'yajra/laravel-oci8' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Yajra\\Oci8\\Oci8ServiceProvider',
+      1 => 'Yajra\\Oci8\\Oci8ValidationServiceProvider',
+    ),
+  ),
 );
